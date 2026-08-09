@@ -74,11 +74,11 @@ pipeline {
         ]]) {
           sh '''
             aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}
-            kubectl apply -f k8s/namespace.yaml
+            kubectl apply -f K8S/namespace.yaml
             kubectl set image deployment/devops-demo-app \
               devops-demo-app=${ECR_REPO}:${IMAGE_TAG} \
               -n ${K8S_NAMESPACE} --record || \
-            kubectl apply -f k8s/ -n ${K8S_NAMESPACE}
+            kubectl apply -f K8S/ -n ${K8S_NAMESPACE}
             kubectl rollout status deployment/devops-demo-app -n ${K8S_NAMESPACE} --timeout=120s
           '''
         }
