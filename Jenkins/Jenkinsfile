@@ -10,7 +10,7 @@ pipeline {
   agent any
 
   environment {
-    AWS_REGION      = 'us-east-1'
+    AWS_REGION      = 'ap-south-1'
     AWS_ACCOUNT_ID  = '123456789012'                 // replace with your account id
     ECR_REPO        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-demo-app"
     EKS_CLUSTER     = 'devops-demo-dev'
