@@ -1,0 +1,9 @@
+awscliv2.zip
+aws/
+app/node_modules/
+
+Terraform/terraform.tfstate
+Terraform/terraform.tfstate.backup
+Terraform/terraform.tfvars
+Terraform/.terraform/
+K8S/eksctl_Linux_amd64.tar.gz

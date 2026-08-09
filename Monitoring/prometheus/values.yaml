@@ -1,0 +1,31 @@
+# Helm values for the kube-prometheus-stack chart (installs Prometheus,
+# Alertmanager, Grafana, and node/kube-state metrics exporters in one shot).
+#
+#   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#   helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+#     -n monitoring --create-namespace -f monitoring/prometheus/values.yaml
+
+grafana:
+  enabled: true
+  adminPassword: "changeme"   # override at install time with --set grafana.adminPassword=...
+  service:
+    type: ClusterIP
+  defaultDashboardsEnabled: true
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    # Let Prometheus pick up ServiceMonitors from any namespace (by
+    # default the chart restricts discovery to its own release labels).
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+alertmanager:
+  enabled: true

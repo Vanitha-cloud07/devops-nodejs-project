@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-demo-app
+  namespace: devops-demo
+  labels:
+    app: devops-demo-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-demo-app
+  template:
+    metadata:
+      labels:
+        app: devops-demo-app
+      annotations:
+        # Tells Prometheus (with the annotation-based scrape config) to
+        # scrape this pod directly. Not needed if you use the
+        # ServiceMonitor CRD from monitoring/prometheus instead.
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: devops-demo-app
+          # Replace with your ECR repo URL; Jenkins overwrites this tag on
+          # every deploy via `kubectl set image`.
+          image: 726871385945.dkr.ecr.ap-south-1.amazonaws.com/devops-demo-app:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15

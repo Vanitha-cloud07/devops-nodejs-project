@@ -1,0 +1,24 @@
+# Spins up a local Jenkins controller for testing the pipeline before
+# pointing it at a real Jenkins server.
+#   docker compose up -d
+#   open http://localhost:8080
+#
+# Mounts the host Docker socket so Jenkins can build/push images
+# (this gives the container root-equivalent access to the host — fine for
+# a local demo, not how you'd run a shared production Jenkins).
+services:
+  jenkins:
+    build: .
+    container_name: jenkins
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.aws:/var/jenkins_home/.aws:ro
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+
+volumes:
+  jenkins_home:

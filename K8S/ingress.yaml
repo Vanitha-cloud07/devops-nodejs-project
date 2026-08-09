@@ -1,0 +1,25 @@
+# Requires the AWS Load Balancer Controller installed on the cluster
+# (see README "Optional: expose via ALB" section). Without it, use
+#   kubectl port-forward svc/devops-demo-app -n devops-demo 8080:80
+# to reach the app instead.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devops-demo-app
+  namespace: devops-demo
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: devops-demo-app
+                port:
+                  number: 80

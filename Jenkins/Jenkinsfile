@@ -1,0 +1,100 @@
+// Declarative Jenkins pipeline: test -> build image -> push to ECR -> deploy to EKS
+//
+// Required Jenkins setup (see ../README.md "Jenkins" section for details):
+//   - Credentials (Manage Jenkins > Credentials):
+//       aws-jenkins-creds   (AWS Access Key ID / Secret, "AWS Credentials" type)
+//   - Plugins: Docker Pipeline, Pipeline: AWS Steps, Kubernetes CLI
+//   - Tools installed on the agent: docker, aws-cli v2, kubectl
+
+pipeline {
+  agent any
+
+  environment {
+    AWS_REGION      = 'us-east-1'
+    AWS_ACCOUNT_ID  = '123456789012'                 // replace with your account id
+    ECR_REPO        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-demo-app"
+    EKS_CLUSTER     = 'devops-demo-dev'
+    IMAGE_TAG       = "${env.BUILD_NUMBER}"
+    K8S_NAMESPACE   = 'devops-demo'
+  }
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Install & Test') {
+      steps {
+        dir('app') {
+          sh '''
+            npm install
+            npm test
+          '''
+        }
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        dir('app') {
+          sh "docker build -t ${ECR_REPO}:${IMAGE_TAG} -t ${ECR_REPO}:latest ."
+        }
+      }
+    }
+
+    stage('Push to ECR') {
+      steps {
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: 'aws-jenkins-creds'
+        ]]) {
+          sh '''
+            aws ecr get-login-password --region ${AWS_REGION} \
+              | docker login --username AWS --password-stdin ${ECR_REPO%/*}
+            docker push ${ECR_REPO}:${IMAGE_TAG}
+            docker push ${ECR_REPO}:latest
+          '''
+        }
+      }
+    }
+
+    stage('Deploy to EKS') {
+      steps {
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: 'aws-jenkins-creds'
+        ]]) {
+          sh '''
+            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}
+            kubectl apply -f k8s/namespace.yaml
+            kubectl set image deployment/devops-demo-app \
+              devops-demo-app=${ECR_REPO}:${IMAGE_TAG} \
+              -n ${K8S_NAMESPACE} --record || \
+            kubectl apply -f k8s/ -n ${K8S_NAMESPACE}
+            kubectl rollout status deployment/devops-demo-app -n ${K8S_NAMESPACE} --timeout=120s
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Deployed ${ECR_REPO}:${IMAGE_TAG} to ${EKS_CLUSTER}"
+    }
+    failure {
+      echo 'Pipeline failed — check stage logs above.'
+    }
+    always {
+      sh 'docker image prune -f || true'
+    }
+  }
+}

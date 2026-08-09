@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars and adjust as needed:
+#   cp terraform.tfvars.example terraform.tfvars
+
+aws_region   = "ap-south-1"
+project_name = "devops-demo"
+environment  = "dev"

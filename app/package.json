@@ -1,0 +1,14 @@
+{
+  "name": "devops-demo-app",
+  "version": "1.0.0",
+  "description": "Sample Node.js app for end-to-end CI/CD demo",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "prom-client": "^15.1.3"
+  }
+}

@@ -1,0 +1,21 @@
+# Tells the Prometheus Operator (installed by kube-prometheus-stack) to
+# scrape the app's /metrics endpoint every 15s.
+#   kubectl apply -f monitoring/prometheus/service-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: devops-demo-app
+  namespace: devops-demo
+  labels:
+    release: kube-prometheus-stack   # must match the Helm release name
+spec:
+  selector:
+    matchLabels:
+      app: devops-demo-app
+  namespaceSelector:
+    matchNames:
+      - devops-demo
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
