@@ -11,7 +11,7 @@ pipeline {
 
   environment {
     AWS_REGION      = 'ap-south-1'
-    AWS_ACCOUNT_ID  = '123456789012'                 // replace with your account id
+    AWS_ACCOUNT_ID  = '726871385945'                 // replace with your account id
     ECR_REPO        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-demo-app"
     EKS_CLUSTER     = 'devops-demo-dev'
     IMAGE_TAG       = "${env.BUILD_NUMBER}"
