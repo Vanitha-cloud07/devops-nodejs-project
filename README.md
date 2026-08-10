@@ -1,4 +1,4 @@
-Copy everything below exactly as one block into your README.md:
+
 # DevOps Node.js Project
 
 This project demonstrates a complete DevOps workflow for deploying a Node.js application to Amazon EKS using Docker, Terraform, Jenkins, Amazon ECR, Kubernetes, Prometheus, and Grafana.
@@ -345,5 +345,4 @@ This project demonstrates a complete DevOps workflow for a Node.js application.
 The application source code is stored in GitHub, automatically built and deployed through Jenkins, containerized using Docker, stored in Amazon ECR, deployed to Amazon EKS, and monitored using Prometheus and Grafana.
 
 The completed project demonstrates infrastructure as code, containerization, CI/CD automation, Kubernetes orchestration, AWS cloud deployment, and application monitoring.
-Paste that directly into GitHub’s README.md editor, then click Preview. It should now show proper headings, spacing, and code blocks instead of one giant paragraph.
 
