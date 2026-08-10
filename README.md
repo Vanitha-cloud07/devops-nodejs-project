@@ -1,6 +1,6 @@
                                            DevOps Node.js Project
 This project demonstrates a complete DevOps workflow for deploying a Node.js application to Amazon EKS using Docker, Terraform, Jenkins, Amazon ECR, Kubernetes, Prometheus, and Grafana.
-Project Overview
+                                      Project Overview
 The application is a simple Node.js service that exposes health and metrics endpoints. The project includes infrastructure provisioning, containerization, continuous integration and deployment, Kubernetes deployment, and monitoring.
 The CI/CD pipeline automatically builds the application, creates a Docker image, pushes the image to Amazon ECR, and deploys the updated image to the EKS cluster.
 Prometheus collects application and Kubernetes metrics, while Grafana provides dashboards for monitoring application health and performance.
@@ -132,7 +132,7 @@ The project includes custom Prometheus configuration under:
 Monitoring/prometheus/
 The ServiceMonitor allows Prometheus to scrape the Node.js application metrics endpoint.
 PrometheusRule resources can be used to define alerts for application health and performance conditions.
-CI/CD Workflow
+                                   CI/CD Workflow
 A code change is committed and pushed to GitHub.
 Jenkins checks out the latest source code.
 The application dependencies are installed and tested.
@@ -143,7 +143,7 @@ Kubernetes is updated to use the new Docker image.
 The deployment is verified.
 Prometheus continuously collects application metrics.
 Grafana displays the application monitoring data.
-Verification
+                      Verification
 Application pods can be verified with:
 kubectl get pods -n devops-demo
 Services can be verified with:
@@ -156,7 +156,7 @@ The application health endpoint should return a successful HTTP response.
 /health
 The metrics endpoint should return Prometheus-formatted metrics.
 /metrics
-Security
+                                   Security
 AWS access keys and secrets are not stored directly in the repository.
 Jenkins credentials are managed through the Jenkins Credentials system.
 Terraform state files, Terraform variable files, application dependencies, downloaded binaries, and local configuration files are excluded using .gitignore.
