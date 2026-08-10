@@ -9,6 +9,7 @@
 services:
   jenkins:
     build: .
+    user: root
     container_name: jenkins
     ports:
       - "8081:8080"
